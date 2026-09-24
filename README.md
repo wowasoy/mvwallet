@@ -64,6 +64,23 @@ Output is in dist/.
 The files public/_headers and public/_redirects are picked up automatically
 by Cloudflare Pages to apply security headers and SPA fallback routing.
 
+## Install as App (PWA)
+
+mvwallet is a Progressive Web App. You can install it on your phone's home screen.
+
+**Android (Chrome):**
+1. Open https://mvwallet.pages.dev in Chrome.
+2. Tap the three-dot menu and select **Install app** or **Add to Home screen**.
+3. Confirm. The wallet appears as an icon on your home screen.
+
+**iOS (Safari):**
+1. Open https://mvwallet.pages.dev in Safari.
+2. Tap the **Share** button.
+3. Select **Add to Home Screen**.
+4. Confirm.
+
+Once installed, the app runs in standalone mode without the browser address bar.
+
 ## License
 
 MIT
