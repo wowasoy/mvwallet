@@ -1,5 +1,7 @@
 # mvwallet
 
+![CI](https://github.com/wowasoy/mvwallet/actions/workflows/ci.yml/badge.svg)
+
 A self-custodial EVM wallet for Ethereum Sepolia Testnet.
 
 Built with Vite, React, TypeScript, and Ethers.js. No backend. No tracking.
@@ -43,21 +45,9 @@ desktop without an app store.
 ### Desktop (Chrome, Edge, or Brave)
 
 1. Open https://mvwallet.pages.dev in the browser.
-2. Look for the install icon in the address bar (a small monitor with a
-   downward arrow).
+2. Look for the install icon in the address bar.
 3. Click it and confirm installation.
 4. The app launches as a standalone window.
-
-### Manual Installation Fallback
-
-If the browser does not offer an install prompt, use the manual method:
-
-- **Android**: browser menu, then **Add to Home screen**.
-- **iOS**: Safari Share menu, then **Add to Home Screen**.
-- **Desktop**: browser menu, then **Install mvwallet**.
-
-The manual method may open the app inside a browser tab with the address bar
-visible. The installed method runs in standalone mode.
 
 ## First-Time Use
 
@@ -71,37 +61,6 @@ visible. The installed method runs in standalone mode.
    It cannot be recovered.
 5. Confirm that you have written down the seed phrase.
 6. The dashboard opens with your address and Sepolia ETH balance.
-
-## Security Notes for Users
-
-Read this before using the app.
-
-- **Testnet only.** This wallet is hardcoded to Sepolia Testnet (chain ID
-  11155111). It does not connect to Ethereum mainnet. Do not send real funds.
-- **Self-custody means self-responsibility.** The seed phrase is the only way
-  to recover the wallet. If the seed phrase is lost, no one can help.
-- **Not audited.** The code has not been reviewed by a security firm. Use it
-  for learning and experimentation only.
-- **No backend.** The application runs entirely in the browser. There is no
-  server that can reset a password or restore a wallet.
-- **Data location.** The encrypted keystore is stored in IndexedDB on the
-  device where the wallet was created. Clearing browser data or deleting the
-  app will remove the keystore. The seed phrase is required to restore access.
-- **No seed phrase transmission.** The seed phrase never leaves the device.
-  If any prompt asks for the seed phrase outside the app, it is a phishing
-  attempt.
-
-## Uninstalling
-
-To remove the wallet:
-
-1. Open the app, tap **Lock**, then tap **Delete wallet** and confirm.
-2. Uninstall the PWA from the home screen or browser settings.
-3. Clear site data in browser settings if additional cleanup is desired.
-
-Deleting the wallet removes the encrypted keystore from the device. The
-on-chain address and any balance remain on Sepolia Testnet and can be
-restored at any time using the original seed phrase.
 
 ## Security
 
@@ -119,6 +78,8 @@ This is an educational project. It is not audited. Do not use it with real funds
 | Web3     | Ethers.js 6 |
 | Storage  | IndexedDB   |
 | Styling  | Tailwind 3  |
+| Testing  | Vitest      |
+| CI       | GitHub Actions |
 
 ## Local Development
 
@@ -131,6 +92,10 @@ npm run build
 
 Output is in dist/.
 
+## Test
+
+npm test
+
 ## Deploy to Cloudflare Pages
 
 1. Push this repository to GitHub.
@@ -141,7 +106,7 @@ Output is in dist/.
 
 | Setting                 | Value             |
 |-------------------------|-------------------|
-| Framework preset        | Vite              |
+| Framework preset        | React (Vite)      |
 | Build command           | npm run build     |
 | Build output directory  | dist              |
 
@@ -149,23 +114,6 @@ Output is in dist/.
 
 The files public/_headers and public/_redirects are picked up automatically
 by Cloudflare Pages to apply security headers and SPA fallback routing.
-
-## Install as App (PWA)
-
-mvwallet is a Progressive Web App. You can install it on your phone's home screen.
-
-**Android (Chrome):**
-1. Open https://mvwallet.pages.dev in Chrome.
-2. Tap the three-dot menu and select **Install app** or **Add to Home screen**.
-3. Confirm. The wallet appears as an icon on your home screen.
-
-**iOS (Safari):**
-1. Open https://mvwallet.pages.dev in Safari.
-2. Tap the **Share** button.
-3. Select **Add to Home Screen**.
-4. Confirm.
-
-Once installed, the app runs in standalone mode without the browser address bar.
 
 ## License
 
