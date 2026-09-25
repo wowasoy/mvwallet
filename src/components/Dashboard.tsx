@@ -2,8 +2,11 @@ import { useState } from "react";
 import { HDNodeWallet, formatEther } from "ethers";
 import { EthLogo } from "./EthLogo";
 import { SendForm } from "./SendForm";
+import { SendTokenForm } from "./SendTokenForm";
+import { TokenList } from "./TokenList";
 import { ExportMnemonic } from "./ExportMnemonic";
 import { useBalance } from "../hooks/useBalance";
+import { useTokenBalances } from "../hooks/useTokenBalances";
 import { formatAddress } from "../lib/validation";
 import { EXPLORER_BASE } from "../lib/constants";
 
@@ -14,7 +17,18 @@ type Props = {
 
 export function Dashboard({ wallet, onLock }: Props) {
   const { balance, loading, error, refresh } = useBalance(wallet.address);
+  const {
+    balances: tokenBalances,
+    loading: tokensLoading,
+    error: tokensError,
+    refresh: refreshTokens
+  } = useTokenBalances(wallet.address);
   const [showExport, setShowExport] = useState(false);
+
+  const handleRefreshAll = () => {
+    refresh();
+    refreshTokens();
+  };
 
   const handleCopyAddress = async () => {
     try {
@@ -53,7 +67,7 @@ export function Dashboard({ wallet, onLock }: Props) {
         </div>
 
         <div className="pt-4 border-t border-white/10">
-          <p className="label mb-0">Balance</p>
+          <p className="label mb-0">ETH Balance</p>
           <div className="mt-1">
             {loading ? (
               <p className="text-white/50 text-sm">Loading...</p>
@@ -70,7 +84,7 @@ export function Dashboard({ wallet, onLock }: Props) {
           </div>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 flex items-center justify-between">
           <a
             href={`${EXPLORER_BASE}/address/${wallet.address}`}
             target="_blank"
@@ -79,10 +93,24 @@ export function Dashboard({ wallet, onLock }: Props) {
           >
             View on Etherscan
           </a>
+          <button
+            onClick={handleRefreshAll}
+            className="text-xs text-white/50 hover:text-white transition-colors"
+          >
+            Refresh
+          </button>
         </div>
       </div>
 
-      <SendForm wallet={wallet} onSent={refresh} />
+      <TokenList
+        balances={tokenBalances}
+        loading={tokensLoading}
+        error={tokensError}
+      />
+
+      <SendForm wallet={wallet} onSent={handleRefreshAll} />
+
+      <SendTokenForm wallet={wallet} onSent={handleRefreshAll} />
 
       <div className="glass-soft p-4">
         <button
