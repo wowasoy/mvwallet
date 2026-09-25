@@ -9,19 +9,30 @@ const ERC20_ABI = [
   "function transfer(address to, uint256 amount) returns (bool)"
 ] as const;
 
-export function getTokenContract(
+type ERC20ReadContract = {
+  balanceOf: (account: string) => Promise<bigint>;
+  decimals: () => Promise<bigint>;
+  symbol: () => Promise<string>;
+};
+
+export function getTokenReadContract(
   token: TokenInfo,
   provider?: JsonRpcProvider
-): Contract {
-  return new Contract(token.address, ERC20_ABI, provider ?? getProvider());
+): ERC20ReadContract {
+  const contract = new Contract(
+    token.address,
+    ERC20_ABI,
+    provider ?? getProvider()
+  );
+  return contract as unknown as ERC20ReadContract;
 }
 
 export async function getTokenBalance(
   token: TokenInfo,
   address: string
 ): Promise<bigint> {
-  const contract = getTokenContract(token);
-  const raw = (await contract.balanceOf(address)) as bigint;
+  const contract = getTokenReadContract(token);
+  const raw = await contract.balanceOf(address);
   return raw;
 }
 

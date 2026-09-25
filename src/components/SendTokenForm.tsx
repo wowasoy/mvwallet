@@ -1,10 +1,25 @@
 import { useState } from "react";
-import { HDNodeWallet, Wallet } from "ethers";
-import { SUPPORTED_TOKENS, type TokenInfo } from "../lib/constants";
-import { getTokenContract, parseTokenAmount } from "../lib/erc20";
+import { HDNodeWallet, Wallet, Contract } from "ethers";
+import {
+  SUPPORTED_TOKENS,
+  EXPLORER_BASE,
+  type TokenInfo
+} from "../lib/constants";
+import { parseTokenAmount } from "../lib/erc20";
 import { getProvider } from "../lib/provider";
 import { normalizeAddress } from "../lib/validation";
 import { sanitizeError } from "../lib/errors";
+
+const ERC20_TRANSFER_ABI = [
+  "function transfer(address to, uint256 amount) returns (bool)"
+] as const;
+
+type ERC20WriteContract = {
+  transfer: (
+    to: string,
+    amount: bigint
+  ) => Promise<{ wait: () => Promise<{ hash: string } | null> }>;
+};
 
 type Props = {
   wallet: HDNodeWallet;
@@ -27,21 +42,24 @@ export function SendTokenForm({ wallet, onSent }: Props) {
 
   const normalizedRecipient = normalizeAddress(recipient);
   const parsedAmount = parseTokenAmount(amount, selectedToken);
-  const isInputValid = normalizedRecipient !== null && parsedAmount !== null;
+  const isInputValid =
+    normalizedRecipient !== null && parsedAmount !== null;
   const isBusy = status.state === "sending";
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isInputValid) return;
+    if (!isInputValid || !normalizedRecipient || !parsedAmount) return;
 
     setStatus({ state: "sending" });
 
     try {
       const provider = getProvider();
       const connected = new Wallet(wallet.privateKey, provider);
-      const contract = getTokenContract(selectedToken, provider).connect(
+      const contract = new Contract(
+        selectedToken.address,
+        ERC20_TRANSFER_ABI,
         connected
-      ) as ReturnType<typeof getTokenContract>;
+      ) as unknown as ERC20WriteContract;
 
       const tx = await contract.transfer(normalizedRecipient, parsedAmount);
       const receipt = await tx.wait();
@@ -129,9 +147,17 @@ export function SendTokenForm({ wallet, onSent }: Props) {
       </button>
 
       {status.state === "confirmed" && (
-        <p role="status" className="text-emerald-300 text-xs break-all">
-          Confirmed: {status.hash}
-        </p>
+        <div className="text-xs space-y-1">
+          <p className="text-emerald-300">Transaction confirmed.</p>
+          <a
+            href={`${EXPLORER_BASE}/tx/${status.hash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-400 hover:text-emerald-300 underline break-all"
+          >
+            {status.hash}
+          </a>
+        </div>
       )}
 
       {status.state === "error" && (
