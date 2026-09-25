@@ -10,13 +10,8 @@ export function sanitizeError(error: unknown): string {
     return "An unexpected error occurred.";
   }
 
-  let message = error.message;
-
-  for (const pattern of SENSITIVE_PATTERNS) {
-    message = message.replace(pattern, "[REDACTED]");
-  }
-
-  const lower = message.toLowerCase();
+  const originalMessage = error.message;
+  const lower = originalMessage.toLowerCase();
 
   if (lower.includes("user rejected") || lower.includes("user denied")) {
     return "Transaction was rejected.";
@@ -39,6 +34,11 @@ export function sanitizeError(error: unknown): string {
 
   if (lower.includes("invalid mnemonic") || lower.includes("invalid phrase")) {
     return "Invalid seed phrase. Please check the words and try again.";
+  }
+
+  let message = originalMessage;
+  for (const pattern of SENSITIVE_PATTERNS) {
+    message = message.replace(pattern, "[REDACTED]");
   }
 
   return message.slice(0, 200);
