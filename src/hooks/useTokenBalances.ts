@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+import { getCode } from "ethers";
 import { SUPPORTED_TOKENS, type TokenInfo } from "../lib/constants";
 import { getTokenBalance } from "../lib/erc20";
+import { getProvider } from "../lib/provider";
 import { sanitizeError } from "../lib/errors";
 
 export type TokenBalance = {
@@ -23,13 +25,27 @@ export function useTokenBalances(address: string | null) {
     setError(null);
 
     try {
+      const provider = getProvider();
+
       const results = await Promise.all(
-        SUPPORTED_TOKENS.map(async (token) => ({
-          token,
-          balance: await getTokenBalance(token, address)
-        }))
+        SUPPORTED_TOKENS.map(async (token) => {
+          try {
+            const code = await getCode(token.address, provider);
+            if (!code || code === "0x") {
+              return null;
+            }
+            const balance = await getTokenBalance(token, address);
+            return { token, balance };
+          } catch {
+            return null;
+          }
+        })
       );
-      setBalances(results);
+
+      const validBalances = results.filter(
+        (item): item is TokenBalance => item !== null
+      );
+      setBalances(validBalances);
     } catch (err) {
       setError(sanitizeError(err));
     } finally {

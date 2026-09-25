@@ -18,27 +18,15 @@ export const SUPPORTED_TOKENS: readonly TokenInfo[] = [
     decimals: 6
   },
   {
-    symbol: "USDT",
-    name: "Tether USD",
-    address: "0x7169d38820dfd117c3fa1f22a697dba58d90ba06",
-    decimals: 6
-  },
-  {
-    symbol: "UNI",
-    name: "Uniswap",
-    address: "0xC32a7fCB1cC8E247D9b8ED74220f6F8A61341F4F",
-    decimals: 6
-  },
-  {
-    symbol: "XAUT",
-    name: "Tether Gold",
-    address: "0x6b4858eda0e021cbe39835d691cd0a1807574103",
+    symbol: "LINK",
+    name: "Chainlink",
+    address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
     decimals: 18
   },
   {
-    symbol: "WBTC",
-    name: "Wrapped Bitcoin",
-    address: "0x324befe00354823df73691e37ed4f7b19ad74f63",
-    decimals: 8
+    symbol: "WETH",
+    name: "Wrapped Ether",
+    address: "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14",
+    decimals: 18
   }
 ] as const;
