@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { getCode } from "ethers";
 import { SUPPORTED_TOKENS, type TokenInfo } from "../lib/constants";
 import { getTokenBalance } from "../lib/erc20";
 import { getProvider } from "../lib/provider";
@@ -30,7 +29,7 @@ export function useTokenBalances(address: string | null) {
       const results = await Promise.all(
         SUPPORTED_TOKENS.map(async (token) => {
           try {
-            const code = await getCode(token.address, provider);
+            const code = await provider.getCode(token.address);
             if (!code || code === "0x") {
               return null;
             }
